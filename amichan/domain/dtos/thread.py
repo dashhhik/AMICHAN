@@ -12,7 +12,6 @@ class ThreadDTO:
     created_at: datetime.datetime
     replies_count: int
     nickname: str
-    is_moderator: bool
     is_deleted: bool
 
 
@@ -23,4 +22,3 @@ class ThreadCreateDTO:
     title: str
     content: str
     nickname: str
-    is_moderator: bool

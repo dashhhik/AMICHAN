@@ -10,7 +10,6 @@ class PostDTO:
     content: str
     created_at: datetime.datetime
     nickname: str
-    is_moderator: bool
     is_deleted: bool
     replies_count: int
 
@@ -21,4 +20,3 @@ class PostCreateDTO:
     parent_id: int
     content: str
     nickname: str
-    is_moderator: bool

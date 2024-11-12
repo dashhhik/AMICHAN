@@ -8,4 +8,4 @@ class AuthTokenDTO:
 
 @dataclass(frozen=True)
 class JWTUserDTO:
-    is_moderator: bool
+    role: str

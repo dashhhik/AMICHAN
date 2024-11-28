@@ -1,5 +1,6 @@
 import datetime
 from dataclasses import dataclass
+from typing import List
 
 
 @dataclass(frozen=True)
@@ -13,6 +14,5 @@ class BoardDTO:
 
 
 @dataclass(frozen=True)
-class BoardCreateDTO:
-    name: str
-    description: str
+class BoardsDTO:
+    boards: list[BoardDTO]

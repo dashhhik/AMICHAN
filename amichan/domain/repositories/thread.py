@@ -1,23 +1,19 @@
 import abc
-from typing import List
+from typing import Any, List
 
-from amichan.domain.dtos.thread import (
-    ThreadDTO,
-    ThreadCreateDTO,
-)
+from amichan.domain.dtos.thread import CreateThreadDTO, ThreadRecordDTO
 
 
 class IThreadRepository(abc.ABC):
     """Thread repository interface."""
 
     @abc.abstractmethod
-    def create(self, thread: ThreadCreateDTO) -> ThreadDTO: ...
+    async def create(
+        self, session: Any, create_item: CreateThreadDTO
+    ) -> ThreadRecordDTO: ...
 
     @abc.abstractmethod
-    def get(self, thread_id: int) -> ThreadDTO: ...
+    async def get(self, session: Any, thread_id: int) -> ThreadRecordDTO: ...
 
     @abc.abstractmethod
-    def get_all(self, board_id: int) -> List[ThreadDTO]: ...
-
-    @abc.abstractmethod
-    def delete(self, thread_id: int) -> None: ...
+    async def get_all(self, session: Any, board_id: int) -> list[ThreadRecordDTO]: ...

@@ -2,8 +2,14 @@ from fastapi import APIRouter
 
 from amichan.api.schemas.requests.thread import CreateThreadRequest
 from amichan.api.schemas.responses.board import BoardsResponse
+from fastapi.responses import RedirectResponse
 from amichan.api.schemas.responses.thread import ThreadFeedResponse, ThreadResponse
-from amichan.core.dependencies import DBSession, IBoardsService, IThreadService
+from amichan.core.dependencies import (
+    DBSession,
+    IBoardsService,
+    IThreadService,
+    CurrentUser,
+)
 
 router = APIRouter()
 
@@ -42,11 +48,14 @@ async def get_board_threads(
 async def create_thread(
     payload: CreateThreadRequest,
     session: DBSession,
+    current_user: CurrentUser,
     thread_service: IThreadService,
 ) -> ThreadResponse:
     """
     Create new article.
     """
+    if current_user is None:
+        RedirectResponse(url="/auth/login")
     thread_dto = await thread_service.create_new_thread(
         session=session,
         author_nickname=payload.thread.nickname,

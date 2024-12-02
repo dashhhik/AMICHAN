@@ -7,3 +7,6 @@ class IOAuthService(ABC):
 
     @abstractmethod
     async def callback(self, code: str) -> OAuthUserDTO: ...
+
+    @abstractmethod
+    async def parse_jwt_token(self, token: str) -> OAuthUserDTO: ...

@@ -23,8 +23,18 @@ class YandexOAuthService(IOAuthService):
         async with aiohttp.ClientSession() as session:
             headers = {"Authorization": f"Bearer {access_token}"}
             async with session.get(
-                    "https://login.yandex.ru/info", headers=headers
+                "https://login.yandex.ru/info", headers=headers
             ) as response:
                 user_info = await response.json()
 
         return OAuthUserDTO(email=user_info.get("default_email"), token=access_token)
+
+    async def parse_jwt_token(self, token: str) -> OAuthUserDTO:
+        async with aiohttp.ClientSession() as session:
+            headers = {"Authorization": f"Bearer {token}"}
+            async with session.get(
+                "https://login.yandex.ru/info", headers=headers
+            ) as response:
+                user_info = await response.json()
+
+        return OAuthUserDTO(email=user_info.get("default_email"), token=token)

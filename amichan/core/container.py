@@ -7,15 +7,20 @@ from amichan.core.config import get_app_settings
 from amichan.core.settings.base import BaseAppSettings
 from amichan.domain.mapper import IModelMapper
 from amichan.domain.repositories.board import IBoardRepository
+from amichan.domain.repositories.post import IPostRepository
 from amichan.domain.repositories.thread import IThreadRepository
 from amichan.domain.services.board import IBoardService
+from amichan.domain.services.post import IPostService
 from amichan.domain.services.thread import IThreadService
 from amichan.infrastructure.mappers.board import BoardModelMapper
 from amichan.infrastructure.mappers.thread import ThreadModelMapper
+from amichan.infrastructure.mappers.post import PostModelMapper
 from amichan.infrastructure.repositories.board import BoardRepository
 from amichan.infrastructure.repositories.thread import ThreadRepository
+from amichan.infrastructure.repositories.post import PostRepository
 from amichan.services.board import BoardsService
 from amichan.services.thread import ThreadService
+from amichan.services.post import PostService
 
 
 class Container:
@@ -54,7 +59,7 @@ class Container:
         return ThreadModelMapper()
 
     def thread_repository(self) -> IThreadRepository:
-        return ThreadRepository(thread_mapper=self.thread_model_mapper())
+        return ThreadRepository(thread_mapper=self.thread_model_mapper(), post_mapper=self.post_model_mapper())
 
     def thread_service(self) -> IThreadService:
         return ThreadService(
@@ -71,6 +76,18 @@ class Container:
     def board_service(self) -> IBoardService:
         return BoardsService(
             board_repo=self.board_repository(),
+        )
+
+    @staticmethod
+    def post_model_mapper() -> IModelMapper:
+        return PostModelMapper()
+
+    def post_repository(self) -> IPostRepository:
+        return PostRepository(post_mapper=self.post_model_mapper())
+
+    def post_service(self) -> IPostService:
+        return PostService(
+            post_repo=self.post_repository(),
         )
 
 

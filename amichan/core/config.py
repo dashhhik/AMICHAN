@@ -9,6 +9,5 @@ def get_app_settings() -> AppSettings:
     """
     Return application config.
     """
-    print(DevAppSettings())
 
     return DevAppSettings()

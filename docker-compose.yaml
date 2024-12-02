@@ -1,13 +1,11 @@
-version: '3.9'
-
 services:
   amichan_api:
+    image: amichan-amichan_api
     container_name: amichan-api
     build: .
     command: uvicorn amichan.app:app --host 0.0.0.0 --port 8000
     environment:
       POSTGRES_HOST: amichan_db
-
     volumes:
       - .:/amichan
     ports:

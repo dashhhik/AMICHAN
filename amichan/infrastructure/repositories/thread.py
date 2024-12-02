@@ -3,15 +3,20 @@ from typing import Any, List
 
 from sqlalchemy import insert, select
 
-from amichan.domain.dtos.thread import CreateThreadDTO, ThreadRecordDTO
+from amichan.domain.dtos.thread import CreateThreadDTO, ThreadRecordDTO, ThreadPostsDTO
 from amichan.domain.mapper import IModelMapper
 from amichan.domain.repositories.thread import IThreadRepository
-from amichan.infrastructure.models import Thread
+from amichan.infrastructure.models import Thread, Post
 
 
 class ThreadRepository(IThreadRepository):
-    def __init__(self, thread_mapper: IModelMapper[Thread, ThreadRecordDTO]):
+    def __init__(
+        self,
+        thread_mapper: IModelMapper[Thread, ThreadRecordDTO],
+        post_mapper: IModelMapper[Post, Any],
+    ):
         self._thread_mapper = thread_mapper
+        self._post_mapper = post_mapper
 
     async def create(
         self, session: Any, create_item: CreateThreadDTO
@@ -24,7 +29,6 @@ class ThreadRepository(IThreadRepository):
                 content=create_item.content,
                 created_at=datetime.now(),
                 nickname=create_item.nickname,
-                tag=create_item.tag,
             )
             .returning(Thread)
         )
@@ -34,20 +38,24 @@ class ThreadRepository(IThreadRepository):
             raise ValueError("Failed to insert thread")  # Add error handling
         return self._thread_mapper.to_dto(thread)
 
-    async def get(self, session: Any, thread_id: int) -> ThreadRecordDTO:
-        query = select(Thread)
+    async def get(self, session: Any, thread_id: int) -> ThreadPostsDTO:
+        thread_query = select(Thread).where(Thread.id == thread_id)
+        thread_result = await session.execute(thread_query)
+        thread = thread_result.scalar()
+        if thread is None:
+            raise ValueError(f"Thread with id {thread_id} not found")
 
-        thread = await session.execute(query)
+        posts_query = select(Post).where(Post.thread_id == thread_id)
+        posts_result = await session.execute(posts_query)
+        posts = posts_result.scalars().all()
 
-        th = thread.scalars().first()
+        thread_dto = self._thread_mapper.to_dto(thread)
+        posts_dto = [self._post_mapper.to_dto(post) for post in posts]
 
-        # Log the result of the query
-        print(f"Thread query result for id {thread_id}: {th}")
+        return ThreadPostsDTO(thread=thread_dto, posts=posts_dto)
 
-        return self._thread_mapper.to_dto(thread)
-
-    async def get_all(self, session: Any, board_id: int) -> list[ThreadRecordDTO]:
-        print(f"Getting all threads for board {board_id}")
-        query = select(Thread)
+    async def get_all(self, session: Any, board_id: int) -> List[ThreadRecordDTO]:
+        query = select(Thread).where(Thread.board_id == board_id)
         result = await session.execute(query)
-        return [self._thread_mapper.to_dto(thread) for thread in result]
+        threads = result.scalars().all()
+        return [self._thread_mapper.to_dto(thread) for thread in threads]

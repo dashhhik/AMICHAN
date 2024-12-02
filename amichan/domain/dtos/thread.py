@@ -1,12 +1,13 @@
 import datetime
 from dataclasses import dataclass
 
+from amichan.domain.dtos.post import PostDTO
+
 
 @dataclass(frozen=True)
 class ThreadDTO:
     id: int
     board_id: int
-    tag_id: int
     title: str
     content: str
     created_at: datetime.datetime
@@ -19,13 +20,18 @@ class ThreadDTO:
 class ThreadRecordDTO:
     id: int
     board_id: int
-    tag_id: int
     title: str
     content: str
     created_at: datetime.datetime
     replies_count: int
     nickname: str
     is_deleted: bool
+
+
+@dataclass(frozen=True)
+class ThreadPostsDTO:
+    thread: ThreadRecordDTO
+    posts: list[PostDTO]
 
 
 @dataclass(frozen=True)
@@ -41,4 +47,3 @@ class CreateThreadDTO:
     content: str
     created_at: str
     nickname: str | None = None
-    tag: str | None = None

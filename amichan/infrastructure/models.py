@@ -1,79 +1,109 @@
 from datetime import datetime
-from functools import partial
-
-from sqlalchemy import Boolean, ForeignKey, Integer, String, Text
-from sqlalchemy.dialects.postgresql import TIMESTAMP
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
+from sqlalchemy import (
+    Column,
+    Integer,
+    String,
+    Boolean,
+    ForeignKey,
+    DateTime,
+    Text,
+)
+from sqlalchemy.orm import DeclarativeBase, relationship
 
 
 class Base(DeclarativeBase):
     pass
 
 
-relationship = partial(relationship, lazy="raise")
+class Board(Base):
+    __tablename__ = "board"
 
-
-class Thread(Base):
-    __tablename__ = "thread"
-
-    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    title: Mapped[str] = mapped_column(String(255), nullable=True)
-    tag_id: Mapped[int] = mapped_column(Integer, nullable=True)
-    replies_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
-    nickname: Mapped[str] = mapped_column(String, nullable=False)
-    is_deleted: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
-    created_at: Mapped[datetime] = mapped_column(
-        TIMESTAMP, nullable=False, default=datetime.utcnow
+    id = Column(Integer, primary_key=True, unique=True)
+    name = Column(String, nullable=False)
+    description = Column(String, nullable=True)
+    created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
+    updated_at = Column(
+        DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow
     )
-    content: Mapped[str] = mapped_column(Text, nullable=False)
+    threads_count = Column(Integer, nullable=False, default=0)
 
-    board_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey("board.id"), nullable=False
-    )
+    threads = relationship("Thread", back_populates="board")
 
-    board: Mapped["Board"] = relationship("Board", back_populates="threads")
-    posts: Mapped[list["Post"]] = relationship(
-        "Post", back_populates="thread", lazy="raise"
-    )
+
+class BanList(Base):
+    __tablename__ = "ban_list"
+
+    id = Column(Integer, primary_key=True, unique=True)
+    email = Column(String, nullable=False, unique=True)
+    reason = Column(String, nullable=True)
+    banned_at = Column(DateTime, nullable=False, default=datetime.utcnow)
+    expires_at = Column(DateTime, nullable=True)
 
 
 class Post(Base):
     __tablename__ = "post"
 
-    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    thread_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey("thread.id"), nullable=False
-    )
-    parent_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey("post.id"), nullable=True
-    )
-    content: Mapped[str] = mapped_column(String, nullable=False)
-    created_at: Mapped[datetime] = mapped_column(
-        TIMESTAMP, nullable=False, default=datetime.utcnow
-    )
-    nickname: Mapped[str] = mapped_column(String, nullable=True)
-    is_deleted: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
-    replies_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    id = Column(Integer, primary_key=True, unique=True)
+    thread_id = Column(Integer, ForeignKey("thread.id"), nullable=False)
+    parent_id = Column(Integer, ForeignKey("post.id"), nullable=True)
+    content = Column(String, nullable=False)
+    created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
+    nickname = Column(String, nullable=True)
+    is_deleted = Column(Boolean, nullable=False, default=False)
+    replies_count = Column(Integer, nullable=False, default=0)
 
-    # Relationships (if needed)
-    thread: Mapped["Thread"] = relationship(
-        "Thread", back_populates="posts", lazy="joined"
-    )
-    parent: Mapped["Post"] = relationship("Post", remote_side=[id], lazy="raise")
+    thread = relationship("Thread", back_populates="posts")
+    parent = relationship("Post", remote_side=[id])
+    files = relationship("File", back_populates="post")
 
 
-class Board(Base):
-    __tablename__ = "board"
+class Thread(Base):
+    __tablename__ = "thread"
 
-    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    name: Mapped[str] = mapped_column(String, nullable=False)
-    description: Mapped[str] = mapped_column(String, nullable=True)
-    created_at: Mapped[datetime] = mapped_column(
-        TIMESTAMP, nullable=False, default=datetime.utcnow
-    )
-    updated_at: Mapped[datetime] = mapped_column(
-        TIMESTAMP, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow
-    )
-    threads_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    id = Column(Integer, primary_key=True, unique=True)
+    board_id = Column(Integer, ForeignKey("board.id"), nullable=False)
+    title = Column(String, nullable=False)
+    content = Column(String, nullable=True)
+    created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
+    replies_count = Column(Integer, nullable=False, default=0)
+    nickname = Column(String, nullable=True)
+    is_deleted = Column(Boolean, nullable=False, default=False)
 
-    threads: Mapped[list["Thread"]] = relationship("Thread", back_populates="board")
+    board = relationship("Board", back_populates="threads")
+    posts = relationship("Post", back_populates="thread")
+    files = relationship("File", back_populates="thread")
+
+
+class File(Base):
+    __tablename__ = "file"
+
+    id = Column(Integer, primary_key=True, unique=True)
+    thread_id = Column(Integer, ForeignKey("thread.id"), nullable=True)
+    post_id = Column(Integer, ForeignKey("post.id"), nullable=True)
+    file_path = Column(String, nullable=False)
+    file_type = Column(String, nullable=True)
+    created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
+
+    thread = relationship("Thread", back_populates="files")
+    post = relationship("Post", back_populates="files")
+
+
+class Admins(Base):
+    __tablename__ = "admins"
+
+    id = Column(Integer, primary_key=True, unique=True)
+    email = Column(String, nullable=False, unique=True)
+    password_hash = Column(String, nullable=False)
+    role_id = Column(Integer, ForeignKey("role.id"), nullable=False)
+
+    role = relationship("Role", back_populates="admins")
+
+
+class Role(Base):
+    __tablename__ = "role"
+
+    id = Column(Integer, primary_key=True, unique=True)
+    name = Column(String, nullable=False, unique=True)
+    permissions = Column(Text, nullable=True)
+
+    admins = relationship("Admins", back_populates="role")

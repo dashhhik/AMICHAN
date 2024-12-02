@@ -16,7 +16,6 @@ class ThreadModelMapper(IModelMapper[Thread, ThreadRecordDTO]):
         return ThreadRecordDTO(
             id=model.id,
             board_id=model.board_id,
-            tag_id=model.tag_id,
             title=model.title,
             content=model.content,
             created_at=model.created_at,
@@ -35,7 +34,6 @@ class ThreadModelMapper(IModelMapper[Thread, ThreadRecordDTO]):
 
         model = Thread(
             board_id=dto.board_id,
-            tag_id=dto.tag_id,
             title=dto.title,
             content=dto.content,
             created_at=dto.created_at,

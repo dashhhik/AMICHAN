@@ -1,8 +1,10 @@
 import datetime
+from typing import List
 
 from pydantic import BaseModel
 
-from amichan.domain.dtos.thread import ThreadRecordDTO, ThreadsFeedDTO
+from amichan.api.schemas.responses.post import PostResponse
+from amichan.domain.dtos.thread import ThreadRecordDTO, ThreadsFeedDTO, ThreadPostsDTO
 
 
 class ThreadData(BaseModel):
@@ -41,3 +43,14 @@ class ThreadFeedResponse(BaseModel):
         ]
         threads_count = len(threads)
         return ThreadFeedResponse(threads=threads, threads_count=threads_count)
+
+
+class ThreadPostsResponse(BaseModel):
+    thread: ThreadResponse
+    posts: List[PostResponse]
+
+    @classmethod
+    def from_dto(cls, dto: ThreadPostsDTO) -> "ThreadPostsResponse":
+        thread_data = ThreadResponse.from_dto(dto.thread)
+        posts_data = [PostResponse.from_dto(post) for post in dto.posts]
+        return cls(thread=thread_data, posts=posts_data)

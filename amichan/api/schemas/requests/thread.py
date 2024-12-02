@@ -7,7 +7,6 @@ DEFAULT_THREAD_OFFSET = 0
 
 
 class ThreadFilters(BaseModel):
-    tag: str | None = None
     limit: int = Field(DEFAULT_THREAD_LIMIT, ge=1)
     offset: int = Field(DEFAULT_THREAD_OFFSET, ge=0)
 
@@ -18,7 +17,6 @@ class CreateThreadData(BaseModel):
     content: str
     created_at: str
     nickname: str | None = None
-    tag: str | None = None
 
 
 class CreateThreadRequest(BaseModel):
@@ -31,5 +29,4 @@ class CreateThreadRequest(BaseModel):
             content=self.thread.content,
             created_at=self.thread.created_at,
             nickname=self.thread.nickname,
-            tag=self.thread.tag,
         )

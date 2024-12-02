@@ -19,7 +19,5 @@ class PostResponse(BaseModel):
             content=dto.content,
             created_at=dto.created_at.isoformat(),
             nickname=dto.nickname,
-            parent_id=dto.parent_id
+            parent_id=dto.parent_id,
         )
-
-

@@ -9,6 +9,8 @@ from amichan.domain.mapper import IModelMapper
 from amichan.domain.repositories.board import IBoardRepository
 from amichan.domain.repositories.post import IPostRepository
 from amichan.domain.repositories.thread import IThreadRepository
+from amichan.domain.services.auth import IUserAuthService
+from amichan.domain.services.oauth import IOAuthService
 from amichan.domain.services.board import IBoardService
 from amichan.domain.services.post import IPostService
 from amichan.domain.services.thread import IThreadService
@@ -19,6 +21,8 @@ from amichan.infrastructure.repositories.board import BoardRepository
 from amichan.infrastructure.repositories.thread import ThreadRepository
 from amichan.infrastructure.repositories.post import PostRepository
 from amichan.services.board import BoardsService
+from amichan.services.oauth import YandexOAuthService
+from amichan.services.auth import UserAuthService
 from amichan.services.thread import ThreadService
 from amichan.services.post import PostService
 
@@ -59,7 +63,10 @@ class Container:
         return ThreadModelMapper()
 
     def thread_repository(self) -> IThreadRepository:
-        return ThreadRepository(thread_mapper=self.thread_model_mapper(), post_mapper=self.post_model_mapper())
+        return ThreadRepository(
+            thread_mapper=self.thread_model_mapper(),
+            post_mapper=self.post_model_mapper(),
+        )
 
     def thread_service(self) -> IThreadService:
         return ThreadService(
@@ -89,6 +96,15 @@ class Container:
         return PostService(
             post_repo=self.post_repository(),
         )
+
+    def oauth_service(self) -> IOAuthService:
+        """Provide an instance of YandexOAuthService."""
+        return YandexOAuthService()
+
+    # UserAuth service
+    def user_auth_service(self) -> IUserAuthService:
+        """Provide an instance of UserAuthService."""
+        return UserAuthService(oauth_service=self.oauth_service())
 
 
 container = Container(settings=get_app_settings())

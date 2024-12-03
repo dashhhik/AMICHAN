@@ -11,7 +11,7 @@ router = APIRouter()
 CLIENT_ID = "b5f53593e3f54c1880be87db24c73fb2"
 REDIRECT_URI = "https://oauth.yandex.ru/verification_code"
 AUTH_URL = "https://oauth.yandex.ru/authorize"
-TOKEN_URL = "https://oauth.yandex.ru/token"
+
 
 
 @router.get("/")

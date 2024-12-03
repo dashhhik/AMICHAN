@@ -1,8 +1,9 @@
 import aiohttp
 
-from amichan.api.routes.auth import TOKEN_URL
 from amichan.domain.dtos.user import OAuthUserDTO
 from amichan.domain.services.oauth import IOAuthService
+
+TOKEN_URL = "https://oauth.yandex.ru/token"
 
 
 class YandexOAuthService(IOAuthService):
@@ -23,7 +24,7 @@ class YandexOAuthService(IOAuthService):
         async with aiohttp.ClientSession() as session:
             headers = {"Authorization": f"Bearer {access_token}"}
             async with session.get(
-                "https://login.yandex.ru/info", headers=headers
+                    "https://login.yandex.ru/info", headers=headers
             ) as response:
                 user_info = await response.json()
 
@@ -33,7 +34,7 @@ class YandexOAuthService(IOAuthService):
         async with aiohttp.ClientSession() as session:
             headers = {"Authorization": f"Bearer {token}"}
             async with session.get(
-                "https://login.yandex.ru/info", headers=headers
+                    "https://login.yandex.ru/info", headers=headers
             ) as response:
                 user_info = await response.json()
 

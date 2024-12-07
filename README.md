@@ -1,6 +1,6 @@
 # Amichan —> best of 2/4/8ch and ami
 
-Клиент-серверное приложение для анонимного общения с авторизацией через почты с доменом «@edu.hse.ru». В себя включает боарды — сборник постов — и посты. 
+Клиент-серверное приложение для анонимного общения с авторизацией через почты с доменом «@edu.hse.ru». В себя включает боарды — сборник тредов — и посты по теме треда. 
 
 ## Возможности
 
@@ -23,10 +23,9 @@ npm run build
 ```
 4. Настройте и запустите докер: 
 ```bash
-make docker_build_postgres
-make migrate
-docker-compose up --build
-docker exec -it amichan alembic upgrade head
+make docker_build
+docker exec -it conduit-api alembic upgrade head
+
 ```
 5. Вы прекрасны.
 

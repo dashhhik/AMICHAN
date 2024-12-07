@@ -11,7 +11,7 @@ class AppSettings(BaseAppSettings):
     """
 
     debug: bool = True
-    docs_url: str = "/"
+    docs_url: str = "/docs"
     openapi_prefix: str = ""
     openapi_url: str = "/openapi.json"
     redoc_url: str = "/redoc"

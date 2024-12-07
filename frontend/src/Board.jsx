@@ -2,15 +2,15 @@ import React, { useState, useEffect } from "react";
 import { getBoardThreads, postBoardMessage } from "./api";
 
 const BoardThreads = ({ boardId }) => {
-  const [threads, setThreads] = useState([]); // Список тредов
+  const [threads, setThreads] = useState([]); 
   const [newThread, setNewThread] = useState({
     title: "",
     content: "",
     nickname: "",
-  }); // Данные для нового треда
-  const [loading, setLoading] = useState(false); // Для индикатора загрузки
+  }); 
+  const [loading, setLoading] = useState(false); 
 
-  // Загрузка тредов
+
   useEffect(() => {
     loadThreads();
   }, [boardId]);
@@ -27,7 +27,7 @@ const BoardThreads = ({ boardId }) => {
     }
   };
 
-  // Обработка отправки нового треда
+
   const handleCreateThread = async (e) => {
     e.preventDefault();
     const payload = {
@@ -35,14 +35,14 @@ const BoardThreads = ({ boardId }) => {
         board_id: boardId,
         title: newThread.title,
         content: newThread.content,
-        created_at: new Date().toISOString(), // Текущая дата/время
+        created_at: new Date().toISOString(),
         nickname: newThread.nickname,
       },
     };
     try {
       await postBoardMessage(boardId, payload);
-      setNewThread({ title: "", content: "", nickname: "" }); // Очистка формы
-      loadThreads(); // Обновить список тредов
+      setNewThread({ title: "", content: "", nickname: "" });
+      loadThreads(); 
     } catch (err) {
       console.error("Error creating thread:", err);
     }
@@ -52,10 +52,7 @@ const BoardThreads = ({ boardId }) => {
     <div>
       <h1>Threads on Board {boardId}</h1>
 
-      {/* Загрузка */}
       {loading && <p>Loading...</p>}
-
-      {/* Список тредов */}
       <ul>
         {threads.map((thread, index) => (
           <li key={index} style={{ marginBottom: "20px" }}>
@@ -70,7 +67,6 @@ const BoardThreads = ({ boardId }) => {
         ))}
       </ul>
 
-      {/* Форма создания нового треда */}
       <form onSubmit={handleCreateThread} style={{ marginTop: "20px" }}>
         <h2>Create a New Thread</h2>
         <div>

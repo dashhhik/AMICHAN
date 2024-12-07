@@ -1,45 +1,45 @@
+import re
+from datetime import datetime, timedelta
+
+from fastapi_mail import MessageSchema
+from pydantic import BaseModel, EmailStr
 from sqlalchemy.ext.asyncio import AsyncSession
 from structlog import get_logger
 
-from amichan.domain.dtos.user import OAuthUserDTO
-from amichan.domain.services.auth import IUserAuthService
+from amichan.domain.dtos.user import OAuthUserDTO, UserDTO
 
-from amichan.domain.services.oauth import IOAuthService
+import jwt
+
+from amichan.domain.services.auth import IJWTService
 
 logger = get_logger()
 
+VALID_EMAIL_REGEX = r".+@edu\.hse\.ru$"
 
-class UserAuthService(IUserAuthService):
+
+class EmailSchema(BaseModel):
+    email: EmailStr
+
+
+class JWTService(IJWTService):
     """Service to handle user auth logic via Yandex OAuth."""
 
-    def __init__(self, oauth_service: IOAuthService):
-        self._oauth_service = oauth_service
+    def __init__(self, secret_key: str) -> None:
+        self._secret_key = secret_key
 
-    async def sign_in_user(self, session: AsyncSession, oauth_token: str):
-        """
-        Handle OAuth-based sign-in via Yandex.
+    async def generate(self, email: str, role_id: int, exp: timedelta) -> str:
+        expiration = datetime.utcnow() + exp
+        payload = {"sub": email, "role": role_id, "exp": expiration}
+        token = jwt.encode(payload, self._secret_key, algorithm="HS256")
+        return token
 
-        :param session: AsyncSession for DB access (if needed).
-        :param oauth_token: OAuth token provided by Yandex.
-        :return: LoggedInUserDTO with user details.
-        :raises UnauthorizedAccessException: If email is not valid for the domain.
-        """
+    async def parse(self, token: str) -> UserDTO | None:
         try:
-            # Получение информации о пользователе через OAuth сервис
-            user_info: OAuthUserDTO = await self._oauth_service.get_user_info(
-                oauth_token
-            )
-        except Exception as e:
-            logger.error("Failed to retrieve user info via OAuth", error=str(e))
-            raise
-
-        # Проверка, что почта принадлежит домену @edu.hse.ru
-        if not user_info.email.endswith("@edu.hse.ru"):
-            logger.error("Unauthorized email domain", email=user_info.email)
-            raise
-
-        logger.info("User signed in successfully", email=user_info.email)
-        return OAuthUserDTO(
-            email=user_info.email,
-            # token=oauth_token,  # Возвращаем сам OAuth токен
-        )
+            payload = jwt.decode(token, self._secret_key, algorithms=["HS256"])
+            return UserDTO(email=payload["sub"], role_id=payload["role"], token=token)
+        except jwt.ExpiredSignatureError:
+            logger.error("Token expired")
+            return None
+        except jwt.InvalidTokenError:
+            logger.error("Invalid token")
+            return None

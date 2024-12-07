@@ -1,14 +1,14 @@
 import abc
+from datetime import timedelta
+
+from amichan.domain.dtos.user import UserDTO
 
 
-class IUserAuthService(abc.ABC):
+class IJWTService(abc.ABC):
     """Interface for UserAuth service."""
 
     @abc.abstractmethod
-    async def sign_in_user(self, oauth_token: str) -> None:
-        """
-        Sign in user using OAuth token.
+    async def generate(self, email: str, role_id: int, exp: timedelta) -> str: ...
 
-        :param oauth_token: OAuth token provided by the client.
-        """
-        pass
+    @abc.abstractmethod
+    async def parse(self, token: str) -> UserDTO: ...

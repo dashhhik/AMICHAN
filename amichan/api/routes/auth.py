@@ -1,61 +1,77 @@
-import secrets
+import re
+from datetime import timedelta
+from fastapi import APIRouter, HTTPException
+from fastapi_mail import FastMail, MessageSchema, ConnectionConfig
+from amichan.core.config import DevAppSettings
+from pydantic import BaseModel, EmailStr
 
-from fastapi import APIRouter, Request, HTTPException
-from fastapi.responses import RedirectResponse
-from fastapi.responses import Response
-
-from amichan.core.dependencies import IOAuthService
+from amichan.core.dependencies import IJWTService
 
 router = APIRouter()
 
-CLIENT_ID = "b5f53593e3f54c1880be87db24c73fb2"
-REDIRECT_URI = "https://oauth.yandex.ru/verification_code"
-AUTH_URL = "https://oauth.yandex.ru/authorize"
+settings = DevAppSettings()
+
+conf = ConnectionConfig(
+    MAIL_USERNAME=settings.mail_username,
+    MAIL_PASSWORD=settings.mail_password,
+    MAIL_FROM=settings.mail_from,
+    MAIL_PORT=settings.mail_port,
+    MAIL_SERVER=settings.mail_server,
+    MAIL_STARTTLS=True,
+    MAIL_SSL_TLS=False,
+    MAIL_FROM_NAME="AMICHAN",
+)
+VALID_EMAIL_REGEX = r".+@edu\.hse\.ru$"
 
 
+class EmailSchema(BaseModel):
+    email: EmailStr
 
-@router.get("/")
-async def redirect_to_oauth(response: Response):
-    state = secrets.token_urlsafe(16)
-    response.set_cookie(key="oauth_state", value=state, httponly=True, secure=True)
-    oauth_url = (
-        f"{AUTH_URL}"
-        f"?response_type=code"
-        f"&client_id={CLIENT_ID}"
-        f"&redirect_uri={REDIRECT_URI}"
-        f"&scope=login:email"
-        f"&state={state}"
+
+@router.post("/send_magic_link/")
+async def send_magic_link(email_data: EmailSchema, jwt_service: IJWTService):
+    email = email_data.email
+
+    if not re.match(VALID_EMAIL_REGEX, email):
+        raise HTTPException(status_code=400, detail="Invalid email domain")
+
+    try:
+        token = await jwt_service.generate(email, 1, timedelta(minutes=5))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to create token: {str(e)}")
+
+    magic_link = f"http://localhost:8000/auth/verify_magic_link/{token}"
+
+    message = MessageSchema(
+        subject="Your Magic Link",
+        recipients=[email],
+        body=f"Click the link to log in: {magic_link}",
+        subtype="plain",
     )
-    return RedirectResponse(oauth_url)
+
+    fm = FastMail(conf)
+    try:
+        await fm.send_message(message)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to send email: {str(e)}")
+
+    return {"message": f"Magic link sent to {email}"}
 
 
-@router.get("/callback")
-async def oauth_callback(
-    request: Request, yandexOauthService: IOAuthService, response: Response
-):
-    code = request.query_params.get("code")
-    state = request.query_params.get("state")
-    oauth_state = request.cookies.get("oauth_state")
-
-    if not code:
-        raise HTTPException(status_code=400, detail="Authorization code is missing")
-    if state != oauth_state:
-        raise HTTPException(status_code=400, detail="Invalid state parameter")
-
-    email, access_token = await yandexOauthService.callback(request)
-
-    if not email or not email.endswith("@edu.hse.ru"):
-        raise HTTPException(
-            status_code=403,
-            detail="Email must belong to @edu.hse.ru domain",
+@router.get("/verify_magic_link/{token}")
+async def verify_magic_link(token: str, jwt_service: IJWTService):
+    try:
+        user = await jwt_service.parse(token)
+        if user is None:
+            raise HTTPException(status_code=400, detail="Invalid token")
+        new_token = await jwt_service.generate(
+            user.email, user.role_id, timedelta(days=30)
         )
+        return {"token": new_token}
 
-    response.set_cookie(
-        key="access_token",
-        value=access_token,
-        httponly=True,  # Ограничивает доступ к cookie из JavaScript
-        secure=True,  # Только для HTTPS
-        max_age=3600,  # Срок действия токена
-    )
-
-    return RedirectResponse(url="/")
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        raise HTTPException(
+            status_code=500, detail=f"Token verification failed: {str(e)}"
+        )

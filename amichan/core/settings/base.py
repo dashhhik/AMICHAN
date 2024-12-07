@@ -18,9 +18,10 @@ class BaseAppSettings(BaseSettings):
     class Config:
         env_file = ".env"
 
-    # jwt_secret_key: str
-    # jwt_token_expiration_minutes: int = 60 * 24 * 7  # one week.
-    # jwt_algorithm: str = "HS256"
+    jwt_secret_key: str
+    jwt_algorithm: str = "HS256"
+
+    mail_password: str
 
     @computed_field  # type: ignore
     @property

@@ -1,24 +1,17 @@
+import SendMagicLinkForm from "./SendMagicLink";
 export default function Cont() {
-  const handleLoginClickGETCODE = () => {
-    console.log("Hyi");
-    window.location.href = "auth/"
-  }
-  const handleLoginAUTH = () => {
-    window.location.href = "vk.com"
-  }
     return (
       <>
   <div className="container">
   <header className="header">
-    <h1 className="title">Amichan</h1>
+    <SendMagicLinkForm className = "header-right"/>
     <img className="log" src="https://www.hse.ru/mirror/pubs/share/522215913" width={75}></img>
-    <button onClick={handleLoginClickGETCODE}>Получить Код</button>
-    <button onClick={handleLoginAUTH}>Авторизация</button>
+    <h1 className="header-right">Amichan</h1>
   </header>
 
   <main className="main">
     <h2 className="welcome">Добро пожаловать. Снова.</h2>
-    <div className="table-container">
+    {/* <div className="table-container">
       <table className="links-table">
         <thead>
           <tr>
@@ -56,8 +49,8 @@ export default function Cont() {
             </td>
           </tr>
         </tbody>
-      </table>
-    </div>
+      </table> */}
+    {/* </div> */}
   </main>
 </div>
       </>

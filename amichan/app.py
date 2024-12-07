@@ -10,9 +10,9 @@ def create_app() -> FastAPI:
 
     application = FastAPI(**settings.fastapi_kwargs)
     application.include_router(router)
-    application.mount(
-        "/", StaticFiles(directory="frontend/dist", html=True), name="static"
-    )
+    # application.mount(
+    #     "/", StaticFiles(directory="frontend/dist", html=True), name="static"
+    # )
 
     return application
 

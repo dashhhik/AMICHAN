@@ -23,10 +23,9 @@ npm run build
 ```
 4. Настройте и запустите докер: 
 ```bash
-make docker_build_postgres
-make migrate
-docker-compose up --build
-docker exec -it amichan alembic upgrade head
+make docker_build
+docker exec -it conduit-api alembic upgrade head
+
 ```
 5. Вы прекрасны.
 

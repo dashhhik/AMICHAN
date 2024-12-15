@@ -6,6 +6,7 @@ from amichan.core.security import HTTPTokenHeader
 from amichan.core.container import container
 from amichan.domain.dtos.user import UserDTO
 from amichan.services.board import BoardsService
+from amichan.services.post import PostService
 from amichan.services.thread import ThreadService
 from amichan.services.auth import JWTService
 
@@ -22,6 +23,7 @@ JWTToken = Annotated[str, Depends(token_security)]
 
 IThreadService = Annotated[ThreadService, Depends(container.thread_service)]
 IBoardsService = Annotated[BoardsService, Depends(container.board_service)]
+IPostService = Annotated[PostService, Depends(container.post_service)]
 IJWTService = Annotated[JWTService, Depends(container.jwt_service)]
 
 

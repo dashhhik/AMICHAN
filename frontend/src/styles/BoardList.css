@@ -1,0 +1,46 @@
+/* Контейнер страницы */
+.board-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+}
+
+/* Заголовок */
+.board-header {
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+/* Грид-контейнер для колонок */
+.board-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+/* Каждая колонка */
+.board-column {
+    flex: 1;
+    min-width: 200px;
+}
+
+/* Элемент доски */
+.board-item {
+    margin: 5px 0;
+}
+
+/* Ссылка на доску */
+.board-link {
+    text-decoration: none;
+    color: #e67e22;
+    font-size: 1rem;
+    transition: color 0.3s;
+}
+
+.board-link:hover {
+    color: #d35400;
+    text-decoration: underline;
+}

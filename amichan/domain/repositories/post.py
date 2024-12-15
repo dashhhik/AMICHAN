@@ -11,27 +11,8 @@ class IPostRepository(abc.ABC):
     async def create(self, session: Any, create_item: PostCreateDTO) -> PostDTO: ...
 
     @abc.abstractmethod
-    async def get_all(self, thread_id: int) -> List[PostDTO]:
-        """
-        Abstract method to retrieve all posts in a thread.
-
-        Args:
-            thread_id: The ID of the thread to retrieve posts from.
-
-        Returns:
-            A list of `PostDTO` objects representing all posts in the thread.
-        """
-        pass
+    async def get_all_by_thread(self,session: Any, thread_id: int) -> List[PostDTO]: ...
 
     @abc.abstractmethod
-    async def delete(self, post_id: int) -> None:
-        """
-        Abstract method to delete a post by its ID.
+    async def get_by_id(self,session: Any, post_id: int) -> PostDTO: ...
 
-        Args:
-            post_id: The ID of the post to delete.
-
-        Returns:
-            None
-        """
-        pass

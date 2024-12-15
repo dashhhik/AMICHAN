@@ -1,0 +1,44 @@
+/* Контейнер страницы */
+.auth-container {
+    text-align: center;
+    margin-top: 50px;
+    font-family: Arial, sans-serif;
+}
+
+/* Поле ввода email */
+.auth-input {
+    padding: 10px;
+    font-size: 16px;
+    width: 300px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+/* Кнопка отправки */
+.auth-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.auth-button:disabled {
+    background-color: #a8c4e6;
+    cursor: not-allowed;
+}
+
+.auth-button:hover {
+    background-color: #0056b3;
+}
+
+/* Сообщения об успехе или ошибке */
+.auth-message {
+    margin-top: 10px;
+    font-size: 14px;
+    color: green;
+}

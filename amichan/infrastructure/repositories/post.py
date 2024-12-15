@@ -36,7 +36,7 @@ class PostRepository(IPostRepository):
             raise ValueError("Failed to insert post")  # Add error handling
         return self._post_mapper.to_dto(post)
 
-    async def get(self, session: Any, post_id: int) -> PostDTO:
+    async def get_by_id(self, session: Any, post_id: int) -> PostDTO:
         """
         Retrieve a single post by its ID.
         """
@@ -56,11 +56,11 @@ class PostRepository(IPostRepository):
         posts = result.scalars().all()
         return [self._post_mapper.to_dto(post) for post in posts]
 
-    async def get_all_by_parent(self, session: Any, parent_id: int) -> List[PostDTO]:
-        """
-        Retrieve all replies to a specific post (by parent ID).
-        """
-        query = select(Post).where(Post.parent_id == parent_id)
-        result = await session.execute(query)
-        posts = result.scalars().all()
-        return [self._post_mapper.to_dto(post) for post in posts]
+    # async def get_all_by_parent(self, session: Any, parent_id: int) -> List[PostDTO]:
+    #     """
+    #     Retrieve all replies to a specific post (by parent ID).
+    #     """
+    #     query = select(Post).where(Post.parent_id == parent_id)
+    #     result = await session.execute(query)
+    #     posts = result.scalars().all()
+    #     return [self._post_mapper.to_dto(post) for post in posts]

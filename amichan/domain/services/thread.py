@@ -21,3 +21,7 @@ class IThreadService(abc.ABC):
 
     @abc.abstractmethod
     async def get_threads(self, session: Any, board_id: int) -> ThreadsFeedDTO: ...
+
+    @abc.abstractmethod
+    async def delete_thread(self, session: Any, thread_id: int) -> None: ...
+

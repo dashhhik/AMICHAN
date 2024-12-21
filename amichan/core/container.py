@@ -99,5 +99,4 @@ class Container:
         return JWTService(secret_key=self._settings.jwt_secret_key)
 
 
-
 container = Container(settings=get_app_settings())

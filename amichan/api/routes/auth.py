@@ -2,10 +2,12 @@ import re
 from datetime import timedelta
 from fastapi import APIRouter, HTTPException
 from fastapi_mail import FastMail, MessageSchema, ConnectionConfig
+
+from amichan.api.schemas.requests.auth import BanUserRequest
 from amichan.core.config import DevAppSettings
 from pydantic import BaseModel, EmailStr
 
-from amichan.core.dependencies import IJWTService
+from amichan.core.dependencies import IJWTService, CurrentUser
 
 router = APIRouter()
 
@@ -75,3 +77,35 @@ async def verify_magic_link(token: str, jwt_service: IJWTService):
         raise HTTPException(
             status_code=500, detail=f"Token verification failed: {str(e)}"
         )
+
+
+@router.post("/ban_user/")
+async def ban_user(
+    current_user: CurrentUser, ban_data: BanUserRequest, jwt_service: IJWTService
+):
+    email = ban_data.email
+
+    if current_user is None:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+    if current_user.role_id > 2:
+        raise HTTPException(status_code=403, detail="Forbidden")
+
+    if not re.match(VALID_EMAIL_REGEX, email):
+        raise HTTPException(status_code=400, detail="Invalid email domain")
+
+    await jwt_service.ban_user(email, ban_data.reason, ban_data.duration)
+
+    message = MessageSchema(
+        subject="You have been banned",
+        recipients=[email],
+        body=f"Your account has been banned. If you believe this is a mistake, contact the administrators.",
+        subtype="plain",
+    )
+
+    fm = FastMail(conf)
+    try:
+        await fm.send_message(message)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to send email: {str(e)}")
+
+    return {"message": f"User {email} has been banned"}

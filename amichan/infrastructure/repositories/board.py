@@ -16,3 +16,20 @@ class BoardRepository(IBoardRepository):
         query = select(Board)
         boards = await session.execute(query)
         return [self._board_mapper.to_dto(board) for board in boards.scalars()]
+
+    async def create_board(
+        self,
+        session: Any,
+        board_name: str,
+        board_description: str,
+    ) -> BoardDTO:
+        board = Board(name=board_name, description=board_description)
+        session.add(board)
+        await session.commit()
+        return self._board_mapper.to_dto(board)
+
+    async def delete_board(self, session: Any, board_id: int) -> None:
+        query = select(Board).filter(Board.id == board_id)
+        board = await session.execute(query)
+        session.delete(board.scalar())
+        await session.commit()

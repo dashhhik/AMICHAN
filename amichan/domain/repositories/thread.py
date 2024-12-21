@@ -17,3 +17,6 @@ class IThreadRepository(abc.ABC):
 
     @abc.abstractmethod
     async def get_all(self, session: Any, board_id: int) -> list[ThreadRecordDTO]: ...
+
+    @abc.abstractmethod
+    async def delete(self, session: Any, thread_id: int) -> None: ...

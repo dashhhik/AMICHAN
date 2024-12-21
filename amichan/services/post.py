@@ -16,7 +16,9 @@ class PostService(IPostService):
     ) -> None:
         self._post_repo = post_repo
 
-    async def get_posts_by_thread(self, session: AsyncSession, thread_id: int) -> list[PostDTO]:
+    async def get_posts_by_thread(
+        self, session: AsyncSession, thread_id: int
+    ) -> list[PostDTO]:
         """
         Retrieve all posts in a thread.
 
@@ -68,3 +70,16 @@ class PostService(IPostService):
             post_id=post_id,
         )
         return post
+
+    async def delete_post(self, session: AsyncSession, post_id: int) -> None:
+        """
+        Delete a post by its ID.
+
+        Args:
+            session: The database session.
+            post_id: The ID of the post to delete.
+        """
+        await self._post_repo.delete(
+            session=session,
+            post_id=post_id,
+        )

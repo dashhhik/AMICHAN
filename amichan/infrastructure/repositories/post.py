@@ -56,11 +56,11 @@ class PostRepository(IPostRepository):
         posts = result.scalars().all()
         return [self._post_mapper.to_dto(post) for post in posts]
 
-    # async def get_all_by_parent(self, session: Any, parent_id: int) -> List[PostDTO]:
-    #     """
-    #     Retrieve all replies to a specific post (by parent ID).
-    #     """
-    #     query = select(Post).where(Post.parent_id == parent_id)
-    #     result = await session.execute(query)
-    #     posts = result.scalars().all()
-    #     return [self._post_mapper.to_dto(post) for post in posts]
+    async def delete(self, session: Any, post_id: int) -> None:
+        """
+        Delete a post by its ID.
+        """
+        query = select(Post).where(Post.id == post_id)
+        post = await session.execute(query)
+        session.delete(post.scalar())
+        await session.commit()

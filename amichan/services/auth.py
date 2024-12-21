@@ -10,6 +10,7 @@ from amichan.domain.dtos.user import OAuthUserDTO, UserDTO
 
 import jwt
 
+from amichan.domain.repositories.auth import IAuthRepository
 from amichan.domain.services.auth import IJWTService
 
 logger = get_logger()
@@ -24,8 +25,9 @@ class EmailSchema(BaseModel):
 class JWTService(IJWTService):
     """Service to handle user auth logic via Yandex OAuth."""
 
-    def __init__(self, secret_key: str) -> None:
+    def __init__(self, secret_key: str, auth_repo: IAuthRepository) -> None:
         self._secret_key = secret_key
+        self._auth_repo = auth_repo
 
     async def generate(self, email: str, role_id: int, exp: timedelta) -> str:
         expiration = datetime.utcnow() + exp
@@ -43,3 +45,8 @@ class JWTService(IJWTService):
         except jwt.InvalidTokenError:
             logger.error("Invalid token")
             return None
+
+    async def ban_user(self, email: str, reason: str, duration: int) -> None:
+        if not re.match(VALID_EMAIL_REGEX, email):
+            raise ValueError("Invalid email")
+        await self._auth_repo.ban_user(email=email, reason=reason, duration=duration)

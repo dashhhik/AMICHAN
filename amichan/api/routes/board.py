@@ -1,5 +1,6 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 
+from amichan.api.schemas.requests.board import BoardCreateRequest
 from amichan.api.schemas.requests.thread import CreateThreadRequest
 from amichan.api.schemas.responses.board import BoardsResponse
 from fastapi.responses import RedirectResponse
@@ -62,3 +63,67 @@ async def create_thread(
         thread_to_create=payload.to_dto(),
     )
     return ThreadResponse.from_dto(dto=thread_dto)
+
+
+@router.delete("/{thread_id}")
+async def delete_thread(
+    current_user: CurrentUser,
+    thread_id: int,
+    session: DBSession,
+    thread_service: IThreadService,
+) -> None:
+    """
+    Delete a thread.
+    """
+    if current_user is None:
+        RedirectResponse(url="/auth/login")
+    if current_user.role_id == 4:
+        HTTPException(status_code=403, detail="Forbidden")
+    await thread_service.delete_thread(
+        session=session,
+        thread_id=thread_id,
+    )
+    return None
+
+
+@router.post("/")
+async def create_board(
+    current_user: CurrentUser,
+    session: DBSession,
+    boards_service: IBoardsService,
+    payload: BoardCreateRequest,
+) -> None:
+    """
+    Create a new board.
+    """
+    if current_user is None:
+        RedirectResponse(url="/auth/login")
+    if current_user.role_id == 4:
+        HTTPException(status_code=403, detail="Forbidden")
+    await boards_service.create_new_board(
+        session=session,
+        board_name=payload.board.name,
+        board_description=payload.board.description,
+    )
+    return None
+
+
+@router.delete("/{board_id}")
+async def delete_board(
+    current_user: CurrentUser,
+    board_id: int,
+    session: DBSession,
+    boards_service: IBoardsService,
+) -> None:
+    """
+    Delete a board.
+    """
+    if current_user is None:
+        RedirectResponse(url="/auth/login")
+    if current_user.role_id == 4:
+        HTTPException(status_code=403, detail="Forbidden")
+    await boards_service.delete_board(
+        session=session,
+        board_id=board_id,
+    )
+    return None

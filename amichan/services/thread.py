@@ -34,3 +34,6 @@ class ThreadService(IThreadService):
     async def get_threads(self, session: AsyncSession, board_id: int) -> ThreadsFeedDTO:
         threads = await self._thread_repo.get_all(session=session, board_id=board_id)
         return ThreadsFeedDTO(threads=threads, threads_count=len(threads))
+
+    async def delete_thread(self, session: Any, thread_id: int) -> None:
+        await self._thread_repo.delete(session=session, thread_id=thread_id)

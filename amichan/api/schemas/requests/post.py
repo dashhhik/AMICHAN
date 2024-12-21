@@ -14,5 +14,3 @@ class PostCreateRequest(BaseModel):
             nickname=self.nickname,
             content=self.content,
         )
-
-

@@ -9,3 +9,14 @@ class IBoardRepository(abc.ABC):
 
     @abc.abstractmethod
     async def get_all(self, session: Any) -> list[BoardDTO]: ...
+
+    @abc.abstractmethod
+    async def create_board(
+        self,
+        session: Any,
+        board_name: str,
+        board_description: str,
+    ) -> BoardDTO: ...
+
+    @abc.abstractmethod
+    async def delete_board(self, session: Any, board_id: int) -> None: ...

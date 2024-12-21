@@ -12,3 +12,6 @@ class IJWTService(abc.ABC):
 
     @abc.abstractmethod
     async def parse(self, token: str) -> UserDTO: ...
+
+    @abc.abstractmethod
+    async def ban_user(self, email: str, reason: str, duration: int) -> None: ...

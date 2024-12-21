@@ -59,3 +59,9 @@ class ThreadRepository(IThreadRepository):
         result = await session.execute(query)
         threads = result.scalars().all()
         return [self._thread_mapper.to_dto(thread) for thread in threads]
+
+    async def delete(self, session: Any, thread_id: int) -> None:
+        query = select(Thread).where(Thread.id == thread_id)
+        thread = await session.execute(query)
+        session.delete(thread.scalar())
+        await session.commit()

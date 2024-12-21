@@ -24,4 +24,3 @@ class IThreadService(abc.ABC):
 
     @abc.abstractmethod
     async def delete_thread(self, session: Any, thread_id: int) -> None: ...
-

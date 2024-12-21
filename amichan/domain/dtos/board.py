@@ -16,3 +16,9 @@ class BoardDTO:
 @dataclass(frozen=True)
 class BoardsDTO:
     boards: list[BoardDTO]
+
+
+@dataclass(frozen=True)
+class CreateBoardDTO:
+    name: str
+    description: str

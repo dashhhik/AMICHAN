@@ -1,7 +1,7 @@
 import abc
 from typing import Any
 
-from amichan.domain.dtos.thread import CreateThreadDTO, ThreadRecordDTO, ThreadsFeedDTO
+from amichan.domain.dtos.thread import CreateThreadDTO, ThreadRecordDTO, ThreadsFeedDTO, ThreadPostsDTO
 
 
 class IThreadService(abc.ABC):
@@ -17,7 +17,7 @@ class IThreadService(abc.ABC):
     @abc.abstractmethod
     async def get_thread_by_id(
         self, session: Any, thread_id: int
-    ) -> ThreadRecordDTO: ...
+    ) -> ThreadPostsDTO: ...
 
     @abc.abstractmethod
     async def get_threads(self, session: Any, board_id: int) -> ThreadsFeedDTO: ...

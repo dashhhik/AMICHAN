@@ -39,7 +39,7 @@ async def create_post(
     """
     if current_user is None:
         RedirectResponse(url="/auth/login")
-    post_dto = await post_service.create_new_post(
+    post_dto = await post_service.create_post(
         session=session,
         thread_id=thread_id,
         post_create_dto=payload,

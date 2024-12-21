@@ -3,11 +3,11 @@ from datetime import timedelta
 from fastapi import APIRouter, HTTPException
 from fastapi_mail import FastMail, MessageSchema, ConnectionConfig
 
-from amichan.api.schemas.requests.auth import BanUserRequest
+from amichan.api.schemas.requests.auth import BanUserRequest, AdminLoginRequest
 from amichan.core.config import DevAppSettings
 from pydantic import BaseModel, EmailStr
 
-from amichan.core.dependencies import IJWTService, CurrentUser
+from amichan.core.dependencies import IJWTService, CurrentUser, DBSession
 
 router = APIRouter()
 
@@ -81,7 +81,7 @@ async def verify_magic_link(token: str, jwt_service: IJWTService):
 
 @router.post("/ban_user/")
 async def ban_user(
-    current_user: CurrentUser, ban_data: BanUserRequest, jwt_service: IJWTService
+    current_user: CurrentUser, ban_data: BanUserRequest, jwt_service: IJWTService, session: DBSession,
 ):
     email = ban_data.email
 
@@ -93,7 +93,7 @@ async def ban_user(
     if not re.match(VALID_EMAIL_REGEX, email):
         raise HTTPException(status_code=400, detail="Invalid email domain")
 
-    await jwt_service.ban_user(email, ban_data.reason, ban_data.duration)
+    await jwt_service.ban_user(session=session, email=email, reason=ban_data.reason, duration=ban_data.duration)
 
     message = MessageSchema(
         subject="You have been banned",
@@ -109,3 +109,23 @@ async def ban_user(
         raise HTTPException(status_code=500, detail=f"Failed to send email: {str(e)}")
 
     return {"message": f"User {email} has been banned"}
+
+
+@router.post("/login")
+async def login(admin_login_data: AdminLoginRequest, jwt_service: IJWTService, session: DBSession):
+    email = admin_login_data.email
+    password = admin_login_data.password
+
+    if not re.match(VALID_EMAIL_REGEX, email):
+        raise HTTPException(status_code=400, detail="Invalid email domain")
+
+    try:
+        user = await jwt_service.login(session, email, password)
+        if user is None:
+            raise HTTPException(status_code=400, detail="Invalid credentials")
+        token = await jwt_service.generate(email, user.role_id, timedelta(days=30))
+        return {"token": token}
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Login failed: {str(e)}")

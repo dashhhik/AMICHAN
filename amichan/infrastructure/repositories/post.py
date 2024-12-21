@@ -20,7 +20,6 @@ class PostRepository(IPostRepository):
         query = (
             insert(Post)
             .values(
-                thread_id=create_item.thread_id,
                 parent_id=create_item.parent_id,
                 content=create_item.content,
                 created_at=datetime.now(),

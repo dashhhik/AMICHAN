@@ -36,7 +36,7 @@ class PostService(IPostService):
         return [post for post in posts]
 
     async def create_post(
-        self, session: AsyncSession, post_create_dto: PostCreateDTO
+        self, session: AsyncSession, thread_id:int, post_create_dto: PostCreateDTO
     ) -> PostDTO:
         """
         Create a new post.

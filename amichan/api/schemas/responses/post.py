@@ -13,7 +13,7 @@ class PostResponse(BaseModel):
     parent_id: int | None = None  # Опциональное поле
 
     @classmethod
-    def from_dto(cls, dto: PostDTO):
+    def from_dto(cls, dto: PostDTO) -> "PostResponse":
         return cls(
             id=dto.id,
             content=dto.content,

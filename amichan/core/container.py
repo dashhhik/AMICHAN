@@ -6,6 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_asyn
 from amichan.core.config import get_app_settings
 from amichan.core.settings.base import BaseAppSettings
 from amichan.domain.mapper import IModelMapper
+from amichan.domain.repositories.auth import IAuthRepository
 from amichan.domain.repositories.board import IBoardRepository
 from amichan.domain.repositories.post import IPostRepository
 from amichan.domain.repositories.thread import IThreadRepository
@@ -16,6 +17,7 @@ from amichan.domain.services.thread import IThreadService
 from amichan.infrastructure.mappers.board import BoardModelMapper
 from amichan.infrastructure.mappers.thread import ThreadModelMapper
 from amichan.infrastructure.mappers.post import PostModelMapper
+from amichan.infrastructure.repositories.auth import AuthRepository
 from amichan.infrastructure.repositories.board import BoardRepository
 from amichan.infrastructure.repositories.thread import ThreadRepository
 from amichan.infrastructure.repositories.post import PostRepository
@@ -23,6 +25,7 @@ from amichan.services.board import BoardsService
 from amichan.services.auth import JWTService
 from amichan.services.thread import ThreadService
 from amichan.services.post import PostService
+from amichan.infrastructure.mappers.auth import BanListModelMapper, AdminModelMapper
 
 
 class Container:
@@ -95,8 +98,22 @@ class Container:
             post_repo=self.post_repository(),
         )
 
+    @staticmethod
+    def admin_model_mapper() -> IModelMapper:
+        return AdminModelMapper()
+
+    @staticmethod
+    def ban_list_model_mapper() -> IModelMapper:
+        return BanListModelMapper()
+
+    def auth_repository(self) -> IAuthRepository:
+        return AuthRepository(
+            admin_mapper=self.admin_model_mapper(),
+            ban_list_mapper=self.ban_list_model_mapper(),
+        )
+
     def jwt_service(self) -> IJWTService:
-        return JWTService(secret_key=self._settings.jwt_secret_key)
+        return JWTService(secret_key=self._settings.jwt_secret_key, auth_repo=self.auth_repository())
 
 
 container = Container(settings=get_app_settings())

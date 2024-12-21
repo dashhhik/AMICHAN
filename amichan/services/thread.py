@@ -3,7 +3,7 @@ from typing import Any
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from amichan.core.exceptions import ThreadNotFoundException
-from amichan.domain.dtos.thread import CreateThreadDTO, ThreadRecordDTO, ThreadsFeedDTO
+from amichan.domain.dtos.thread import CreateThreadDTO, ThreadRecordDTO, ThreadsFeedDTO, ThreadPostsDTO
 from amichan.domain.repositories.thread import IThreadRepository
 from amichan.domain.services.thread import IThreadService
 
@@ -25,7 +25,7 @@ class ThreadService(IThreadService):
             create_item=thread_to_create,
         )
 
-    async def get_thread_by_id(self, session: Any, thread_id: int) -> ThreadRecordDTO:
+    async def get_thread_by_id(self, session: Any, thread_id: int) -> ThreadPostsDTO:
         thread = await self._thread_repo.get(session=session, thread_id=thread_id)
         if thread is None:
             raise ThreadNotFoundException(f"Thread with ID {thread_id} not found")

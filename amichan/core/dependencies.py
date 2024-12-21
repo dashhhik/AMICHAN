@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import Depends
+from fastapi import Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from amichan.core.security import HTTPTokenHeader
 from amichan.core.container import container
@@ -32,6 +32,8 @@ async def get_current_user(
     auth_token_service: IJWTService,
 ) -> UserDTO:
     jwt_user = await auth_token_service.parse(token=token)
+    if jwt_user is None:
+        raise HTTPException(status_code=401, detail="Invalid token")
     return jwt_user
 
 

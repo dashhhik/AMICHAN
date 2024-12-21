@@ -55,7 +55,6 @@ class PostModelMapper(IModelMapper[Post, PostDTO]):
             raise ValueError("Cannot convert None to Post model")
 
         model = Post(
-            thread_id=dto.thread_id,
             parent_id=dto.parent_id,
             content=dto.content,
             nickname=dto.nickname,

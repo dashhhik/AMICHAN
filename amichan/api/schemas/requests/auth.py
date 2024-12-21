@@ -1,6 +1,6 @@
 from pydantic import BaseModel, EmailStr
 
-from amichan.domain.dtos.user import BanUserDTO
+from amichan.domain.dtos.user import BanUserDTO, AdminLoginDTO
 
 
 class BanUserRequest(BaseModel):
@@ -13,4 +13,15 @@ class BanUserRequest(BaseModel):
             email=self.email,
             reason=self.reason,
             duration=self.duration,
+        )
+
+
+class AdminLoginRequest(BaseModel):
+    email: EmailStr
+    password: str
+
+    def to_dto(self) -> AdminLoginDTO:
+        return AdminLoginDTO(
+            email=self.email,
+            password=self.password,
         )

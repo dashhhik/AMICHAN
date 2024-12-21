@@ -8,9 +8,7 @@ class IPostService(abc.ABC):
 
     @abc.abstractmethod
     async def create_post(
-        self,
-        session: Any,
-        post_to_create: PostCreateDTO,
+            self, session: Any, thread_id: int, post_create_dto: PostCreateDTO
     ) -> PostDTO: ...
 
     @abc.abstractmethod
@@ -18,7 +16,7 @@ class IPostService(abc.ABC):
 
     @abc.abstractmethod
     async def get_posts_by_thread(
-        self, session: Any, thread_id: int
+            self, session: Any, thread_id: int
     ) -> List[PostDTO]: ...
 
     @abc.abstractmethod

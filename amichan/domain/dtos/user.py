@@ -37,3 +37,9 @@ class BanListDTO:
     reason: str
     banned_at: datetime.datetime
     expires_at: datetime.datetime
+
+
+@dataclass(frozen=True)
+class AdminLoginDTO:
+    email: str
+    password: str

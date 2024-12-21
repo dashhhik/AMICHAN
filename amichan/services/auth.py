@@ -46,7 +46,20 @@ class JWTService(IJWTService):
             logger.error("Invalid token")
             return None
 
-    async def ban_user(self, email: str, reason: str, duration: int) -> None:
+    async def ban_user(
+        self, session: AsyncSession, email: str, reason: str, duration: int
+    ) -> None:
         if not re.match(VALID_EMAIL_REGEX, email):
             raise ValueError("Invalid email")
-        await self._auth_repo.ban_user(email=email, reason=reason, duration=duration)
+        await self._auth_repo.ban_user(session=session,email=email, reason=reason, duration=duration)
+
+    async def login(
+        self, session: AsyncSession, email: str, password: str
+    ) -> UserDTO | None:
+        role_id = await self._auth_repo.login(
+            session=session, email=email, password=password
+        )
+        if role_id is None:
+            return None
+
+        return UserDTO(email=email, role_id=role_id, token="")

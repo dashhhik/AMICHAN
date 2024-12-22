@@ -8,7 +8,7 @@ from sqlalchemy import (
     DateTime,
     Text,
 )
-from sqlalchemy.orm import DeclarativeBase, relationship
+from sqlalchemy.orm import DeclarativeBase, relationship, backref
 
 
 class Base(DeclarativeBase):
@@ -27,7 +27,12 @@ class Board(Base):
     )
     threads_count = Column(Integer, nullable=False, default=0)
 
-    threads = relationship("Thread", back_populates="board")
+    threads = relationship(
+        "Thread",
+        back_populates="board",
+        cascade="all, delete-orphan"  # Добавлено каскадное удаление
+    )
+
 
 
 class BanList(Base):
@@ -52,7 +57,6 @@ class Post(Base):
     is_deleted = Column(Boolean, nullable=False, default=False)
     replies_count = Column(Integer, nullable=False, default=0)
 
-    thread = relationship("Thread", back_populates="posts")
     parent = relationship("Post", remote_side=[id])
     files = relationship("File", back_populates="post")
 
@@ -70,7 +74,10 @@ class Thread(Base):
     is_deleted = Column(Boolean, nullable=False, default=False)
 
     board = relationship("Board", back_populates="threads")
-    posts = relationship("Post", back_populates="thread")
+    posts = relationship(
+        "Post",
+        cascade="all, delete-orphan"  # Оставляем каскадное удаление
+    )
     files = relationship("File", back_populates="thread")
 
 

@@ -31,7 +31,7 @@ const AdminBoardList = () => {
         if (!confirmDelete) return;
 
         try {
-            await api.delete(`/boards/${boardId}`);
+            await api.delete(`/board/${boardId}`);
             alert("Доска успешно удалена!");
             fetchBoards(); // Обновляем список после удаления
         } catch (err) {

@@ -67,25 +67,6 @@ async def create_thread(
     return ThreadResponse.from_dto(dto=thread_dto)
 
 
-@router.delete("/{thread_id}")
-async def delete_thread(
-    current_user: CurrentUser,
-    thread_id: int,
-    session: DBSession,
-    thread_service: IThreadService,
-) -> None:
-    """
-    Delete a thread.
-    """
-    if current_user is None:
-        RedirectResponse(url="/auth/login")
-    if current_user.role_id == 4:
-        HTTPException(status_code=403, detail="Forbidden")
-    await thread_service.delete_thread(
-        session=session,
-        thread_id=thread_id,
-    )
-    return None
 
 
 @router.post("/")
@@ -104,8 +85,8 @@ async def create_board(
         HTTPException(status_code=403, detail="Forbidden")
     await boards_service.create_new_board(
         session=session,
-        board_name=payload.board.name,
-        board_description=payload.board.description,
+        board_name=payload.name,
+        board_description=payload.description,
     )
     return {"message": "Board created"}
 

@@ -23,8 +23,8 @@ class BoardResponse(BaseModel):
             id=dto.id,
             name=dto.name,
             description=dto.description,
-            created_at=dto.created_at,
-            updated_at=dto.updated_at,
+            created_at=dto.created_at.isoformat(),
+            updated_at=dto.updated_at.isoformat(),
             threads_count=dto.threads_count,
         )
         return BoardResponse(board=board)

@@ -62,5 +62,5 @@ class PostRepository(IPostRepository):
         """
         query = select(Post).where(Post.id == post_id)
         post = await session.execute(query)
-        session.delete(post.scalar())
+        await session.delete(post.scalar())
         await session.commit()

@@ -11,6 +11,7 @@ import AdminBoardList from "./components/AdminBoardList.jsx";
 import AdminThreadList from "./components/AdminThreadList.jsx";
 import ThreadPosts from "./components/ThreadPosts";
 import AdminPostList from "./components/AdminPostList";
+import AdminDashboard from "./components/AdminDashboard.jsx";
 
 function App() {
     return (
@@ -20,24 +21,40 @@ function App() {
                 <Route path="/auth" element={<MagicLinkAuth />} />
                 <Route path="/auth/verify_magic_link/:token" element={<VerifyMagicLink />} />
 
-                {/* Маршруты, защищенные аутентификацией */}
+                {/* Защищенные маршруты */}
                 <Route
-                    path="*"
+                    path="/"
                     element={
                         <RequireAuth>
-                            <Routes>
-                                <Route path="/" element={<BoardList />} />
-                                <Route path="/board/:boardId" element={<BoardThreads />} />
-                                <Route path="/admin/login" element={<LoginForm />} />
-                                <Route path="/admin/create-board" element={<CreateBoard />} />
-                                <Route path="/admin/boards" element={<AdminBoardList />} />
-                                <Route path="/admin/:board_id/threads" element={<AdminThreadList />} />
-                                <Route path="/admin/thread/:thread_id/posts" element={<AdminPostList />} />
-                                <Route path="/thread/:threadId" element={<ThreadPosts />} />
-                            </Routes>
+                            <BoardList />
                         </RequireAuth>
                     }
                 />
+                <Route
+                    path="/board/:boardId"
+                    element={
+                        <RequireAuth>
+                            <BoardThreads />
+                        </RequireAuth>
+                    }
+                />
+                <Route
+                    path="/thread/:threadId"
+                    element={
+                        <RequireAuth>
+                            <ThreadPosts />
+                        </RequireAuth>
+                    }
+                />
+
+                {/* Административные маршруты */}
+                <Route path="/admin" element={<AdminDashboard />}>
+                    <Route path="login" element={<LoginForm />} />
+                    <Route path="create-board" element={<CreateBoard />} />
+                    <Route path="boards" element={<AdminBoardList />} />
+                    <Route path=":board_id/threads" element={<AdminThreadList />} />
+                    <Route path="threads/:thread_id/posts" element={<AdminPostList />} />
+                </Route>
             </Routes>
         </Router>
     );

@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Any
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -24,7 +24,7 @@ class BoardsService(IBoardService):
 
     async def create_new_board(
         self,
-        session: AsyncSession,
+        session: Any,
         board_name: str,
         board_description: str,
     ) -> BoardDTO:

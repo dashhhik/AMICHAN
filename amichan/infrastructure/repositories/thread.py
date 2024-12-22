@@ -1,7 +1,9 @@
 from datetime import datetime
+from http.client import HTTPException
 from typing import Any, List
 
 from sqlalchemy import insert, select
+from sqlalchemy.exc import SQLAlchemyError
 
 from amichan.domain.dtos.thread import CreateThreadDTO, ThreadRecordDTO, ThreadPostsDTO
 from amichan.domain.mapper import IModelMapper
@@ -61,7 +63,29 @@ class ThreadRepository(IThreadRepository):
         return [self._thread_mapper.to_dto(thread) for thread in threads]
 
     async def delete(self, session: Any, thread_id: int) -> None:
-        query = select(Thread).where(Thread.id == thread_id)
-        thread = await session.execute(query)
-        session.delete(thread.scalar())
-        await session.commit()
+        try:
+            # Fetch the thread by ID
+            query = select(Thread).where(Thread.id == thread_id)
+            thread_result = await session.execute(query)
+            thread = thread_result.scalar()
+
+            if thread is None:
+                raise HTTPException()
+
+            # Delete the thread
+            await session.delete(thread)
+            await session.commit()
+
+        except HTTPException as e:
+            # Reraise HTTP-specific exceptions
+            raise e
+        except SQLAlchemyError as e:
+            # Rollback and log in case of database errors
+            await session.rollback()
+            print(f"Database error during thread deletion: {e}")
+            raise
+        except Exception as e:
+            # Catch-all for unexpected errors
+            await session.rollback()
+            print(f"Unexpected error during thread deletion: {e}")
+            raise HTTPException()

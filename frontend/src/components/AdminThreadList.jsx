@@ -30,7 +30,7 @@ const AdminThreadList = () => {
 
     const handleNavigateToPosts = (threadId) => {
         // Перенаправляем на страницу, где будут отображаться посты, связанные с тредом
-        navigate(`/admin/thread/${threadId}/posts`);
+        navigate(`/admin/threads/${threadId}/posts`);
     };
 
     const handleDelete = async (threadId) => {

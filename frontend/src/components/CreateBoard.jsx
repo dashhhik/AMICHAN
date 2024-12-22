@@ -18,7 +18,8 @@ const CreateBoard = () => {
         try {
             // Отправка POST-запроса
             const response = await api.post("/board/", {
-                board: { name, description },
+                name,
+                description,
             });
 
             alert(response.data.message); // Показываем сообщение об успехе

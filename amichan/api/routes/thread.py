@@ -3,6 +3,7 @@ from fastapi import APIRouter, HTTPException
 from amichan.api.schemas.responses.thread import ThreadResponse, ThreadPostsResponse
 from amichan.core.dependencies import DBSession, IThreadService, CurrentUser
 from amichan.core.exceptions import ThreadNotFoundException
+from fastapi.responses import RedirectResponse
 
 router = APIRouter()
 
@@ -40,3 +41,23 @@ async def delete_thread(
     if current_user.role_id == 4:
         raise HTTPException(status_code=403, detail="Forbidden")
     await thread_service.delete_thread(session=session, thread_id=thread_id)
+
+@router.delete("/{thread_id}")
+async def delete_thread(
+        current_user: CurrentUser,
+        thread_id: int,
+        session: DBSession,
+        thread_service: IThreadService,
+) -> None:
+    """
+    Delete a thread.
+    """
+    if current_user is None:
+        RedirectResponse(url="/auth/login")
+    if current_user.role_id == 4:
+        HTTPException(status_code=403, detail="Forbidden")
+    await thread_service.delete_thread(
+        session=session,
+        thread_id=thread_id,
+    )
+    return None

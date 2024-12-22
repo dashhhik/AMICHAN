@@ -1,0 +1,94 @@
+.admin-thread-list-container {
+    max-width: 900px;
+    margin: 20px auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #343a40;
+    font-size: 1.5rem;
+}
+
+.admin-thread-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.admin-thread-item {
+    display: flex;
+    flex-direction: column;
+    padding: 15px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #ffffff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.admin-thread-item:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transform: translateY(-3px);
+}
+
+.thread-info h2 {
+    margin: 0 0 10px 0;
+    font-size: 1.2rem;
+    color: #212529;
+}
+
+.thread-info p {
+    margin: 5px 0 10px 0;
+    font-size: 0.9rem;
+    color: #495057;
+}
+
+.thread-info small {
+    font-size: 0.8rem;
+    color: #6c757d;
+}
+
+.thread-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.view-posts-button {
+    padding: 10px 15px;
+    font-size: 0.9rem;
+    color: white;
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.view-posts-button:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+}
+
+.delete-thread-button {
+    padding: 10px 15px;
+    font-size: 0.9rem;
+    color: white;
+    background-color: #dc3545;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.delete-thread-button:hover {
+    background-color: #c82333;
+    transform: scale(1.05);
+}

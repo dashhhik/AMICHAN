@@ -1,0 +1,105 @@
+.admin-board-list-container {
+    max-width: 900px;
+    margin: 20px auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+h1 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: #343a40;
+}
+
+.admin-board-list {
+    list-style: none;
+    padding: 0;
+}
+
+.admin-board-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #fff;
+    transition: box-shadow 0.3s ease;
+}
+
+.admin-board-item:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.board-info h2 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: #212529;
+}
+
+.board-info p {
+    margin: 5px 0;
+    font-size: 0.9rem;
+    color: #6c757d;
+}
+
+.board-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.create-board-button {
+    padding: 10px 20px;
+    font-size: 1rem;
+    color: white;
+    background-color: #28a745;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.create-board-button:hover {
+    background-color: #218838;
+}
+
+.view-threads-button {
+    padding: 8px 12px;
+    font-size: 0.9rem;
+    color: white;
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.view-threads-button:hover {
+    background-color: #0056b3;
+}
+
+.delete-board-button {
+    padding: 8px 12px;
+    font-size: 0.9rem;
+    color: white;
+    background-color: #dc3545;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.delete-board-button:hover {
+    background-color: #c82333;
+}

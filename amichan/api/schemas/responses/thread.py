@@ -8,6 +8,7 @@ from amichan.domain.dtos.thread import ThreadRecordDTO, ThreadsFeedDTO, ThreadPo
 
 
 class ThreadData(BaseModel):
+    id: int
     title: str
     content: str
     created_at: datetime.datetime
@@ -22,6 +23,7 @@ class ThreadResponse(BaseModel):
     @classmethod
     def from_dto(cls, dto: ThreadRecordDTO) -> "ThreadResponse":
         thread = ThreadData(
+            id=dto.id,
             title=dto.title,
             content=dto.content,
             created_at=dto.created_at,

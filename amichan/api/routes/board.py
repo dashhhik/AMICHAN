@@ -92,7 +92,7 @@ async def create_board(
     session: DBSession,
     boards_service: IBoardsService,
     payload: BoardCreateRequest,
-) -> None:
+):
     """
     Create a new board.
     """
@@ -105,7 +105,7 @@ async def create_board(
         board_name=payload.board.name,
         board_description=payload.board.description,
     )
-    return None
+    return {"message": "Board created"}
 
 
 @router.delete("/{board_id}")

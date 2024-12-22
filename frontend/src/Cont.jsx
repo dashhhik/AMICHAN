@@ -1,4 +1,4 @@
-import SendMagicLinkForm from "./SendMagicLink";
+import SendMagicLinkForm from "./components/SendMagicLink.jsx";
 export default function Cont() {
     return (
       <>

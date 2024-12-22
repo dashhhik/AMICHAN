@@ -26,7 +26,7 @@ async def get_post(
     return PostResponse.from_dto(dto=post_dto)
 
 
-@router.post("/{thread_id}/posts", response_model=PostResponse)
+@router.post("/{thread_id}/reply", response_model=PostResponse)
 async def create_post(
     thread_id: int,
     payload: PostCreateRequest,

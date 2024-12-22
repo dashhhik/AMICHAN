@@ -9,30 +9,35 @@ import LoginForm from "./components/Login.jsx";
 import CreateBoard from "./components/CreateBoard.jsx";
 import AdminBoardList from "./components/AdminBoardList.jsx";
 import AdminThreadList from "./components/AdminThreadList.jsx";
-import AdminPostList from "./components/AdminPostList.jsx";
-import ThreadPosts from "./components/AdminPostList.jsx";
+import ThreadPosts from "./components/ThreadPosts";
+import AdminPostList from "./components/AdminPostList";
 
 function App() {
     return (
         <Router>
             <Routes>
-                <Route path="/" element={<BoardList />} />
+                {/* Публичные маршруты, не требующие аутентификации */}
                 <Route path="/auth" element={<MagicLinkAuth />} />
                 <Route path="/auth/verify_magic_link/:token" element={<VerifyMagicLink />} />
+
+                {/* Маршруты, защищенные аутентификацией */}
                 <Route
-                    path="/board/:boardId"
+                    path="*"
                     element={
                         <RequireAuth>
-                            <BoardThreads />
+                            <Routes>
+                                <Route path="/" element={<BoardList />} />
+                                <Route path="/board/:boardId" element={<BoardThreads />} />
+                                <Route path="/admin/login" element={<LoginForm />} />
+                                <Route path="/admin/create-board" element={<CreateBoard />} />
+                                <Route path="/admin/boards" element={<AdminBoardList />} />
+                                <Route path="/admin/:board_id/threads" element={<AdminThreadList />} />
+                                <Route path="/admin/thread/:thread_id/posts" element={<AdminPostList />} />
+                                <Route path="/thread/:threadId" element={<ThreadPosts />} />
+                            </Routes>
                         </RequireAuth>
                     }
                 />
-                <Route path="/admin/login" element={<LoginForm />} />
-                <Route path="/admin/create-board" element={<CreateBoard />} />
-                <Route path="/admin/boards" element={<AdminBoardList />} />
-                <Route path="/admin/:board_id/threads" element={<AdminThreadList />} />
-                {/*<Route path="/admin/:board_id/threads" element={<AdminThreadList />} />*/}
-                <Route path="/admin/thread/:thread_id/posts" element={<AdminPostList />} />
             </Routes>
         </Router>
     );

@@ -42,7 +42,7 @@ async def send_magic_link(email_data: EmailSchema, jwt_service: IJWTService):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to create token: {str(e)}")
 
-    magic_link = f"http://localhost:8000/auth/verify_magic_link/{token}"
+    magic_link = f"http://localhost:5173/auth/verify_magic_link/{token}"
 
     message = MessageSchema(
         subject="Your Magic Link",

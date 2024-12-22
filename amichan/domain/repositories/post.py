@@ -8,7 +8,7 @@ class IPostRepository(abc.ABC):
     """Post repository interface."""
 
     @abc.abstractmethod
-    async def create(self, session: Any, create_item: PostCreateDTO) -> PostDTO: ...
+    async def create(self, session: Any,thread_id:int, create_item: PostCreateDTO) -> PostDTO: ...
 
     @abc.abstractmethod
     async def get_all_by_thread(

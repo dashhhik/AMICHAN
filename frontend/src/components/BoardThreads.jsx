@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import api from "../services/api";
-
 import "../styles/BoardThreads.css";
 
 const BoardThreads = () => {
@@ -10,9 +9,6 @@ const BoardThreads = () => {
     const [threads, setThreads] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [replyContent, setReplyContent] = useState("");
-
-    const token = localStorage.getItem("jwtToken");
 
     useEffect(() => {
         api
@@ -20,6 +16,7 @@ const BoardThreads = () => {
                 headers: { accept: "application/json" },
             })
             .then((response) => {
+                console.log("Полученные треды:", response.data.threads); // Проверка данных
                 setThreads(response.data.threads);
                 setLoading(false);
             })
@@ -30,40 +27,13 @@ const BoardThreads = () => {
             });
     }, [boardId]);
 
-    const handleReply = (threadTitle) => {
-        if (!token) {
-            navigate("/auth");
+    const handleNavigateToPosts = (threadId) => {
+        console.log("Переданный threadId:", threadId); // Проверка threadId
+        if (!threadId) {
+            console.error("ID треда не определен!");
             return;
         }
-
-        if (!replyContent.trim()) {
-            alert("Ответ не может быть пустым.");
-            return;
-        }
-
-        api
-            .post(
-                `http://0.0.0.0:8000/board/${boardId}/threads`,
-                {
-                    thread: {
-                        board_id: boardId,
-                        title: threadTitle,
-                        content: replyContent,
-                        nickname: "Anonymous",
-                    },
-                },
-                { headers: { Authorization: `Token ${token}` } }
-            )
-            .then(() => {
-                alert("Ответ успешно добавлен!");
-                setReplyContent("");
-                return api.get(`http://0.0.0.0:8000/board/${boardId}/threads`);
-            })
-            .then((response) => setThreads(response.data.threads))
-            .catch((err) => {
-                console.error(err);
-                alert(err.response?.data?.detail || "Ошибка при отправке ответа.");
-            });
+        navigate(`/thread/${threadId}`);
     };
 
     if (loading) return <p>Загрузка...</p>;
@@ -82,17 +52,8 @@ const BoardThreads = () => {
                     </div>
                     <h2 className="thread-title">{thread.title}</h2>
                     <p className="thread-content">{thread.content}</p>
-                    <textarea
-                        className="reply-textarea"
-                        placeholder="Введите ваш ответ здесь..."
-                        value={replyContent}
-                        onChange={(e) => setReplyContent(e.target.value)}
-                    />
-                    <button
-                        className="reply-button"
-                        onClick={() => handleReply(thread.title)}
-                    >
-                        Ответить
+                    <button onClick={() => handleNavigateToPosts(thread.id)}>
+                        Перейти к постам
                     </button>
                 </div>
             ))}

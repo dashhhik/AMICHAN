@@ -11,13 +11,13 @@ class PostService(IPostService):
     """Service to handle posts logic."""
 
     def __init__(
-        self,
-        post_repo: IPostRepository,
+            self,
+            post_repo: IPostRepository,
     ) -> None:
         self._post_repo = post_repo
 
     async def get_posts_by_thread(
-        self, session: AsyncSession, thread_id: int
+            self, session: AsyncSession, thread_id: int
     ) -> list[PostDTO]:
         """
         Retrieve all posts in a thread.
@@ -36,7 +36,7 @@ class PostService(IPostService):
         return [post for post in posts]
 
     async def create_post(
-        self, session: AsyncSession, thread_id:int, post_create_dto: PostCreateDTO
+            self, session: AsyncSession, thread_id: int, post_create_dto: PostCreateDTO
     ) -> PostDTO:
         """
         Create a new post.
@@ -51,6 +51,7 @@ class PostService(IPostService):
         post = await self._post_repo.create(
             session=session,
             create_item=post_create_dto,
+            thread_id=thread_id,
         )
         return post
 

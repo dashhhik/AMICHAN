@@ -4,7 +4,7 @@ from amichan.domain.dtos.post import PostCreateDTO
 
 
 class PostCreateRequest(BaseModel):
-    parent_id: int
+    parent_id: int | None = None
     nickname: str | None = None
     content: str
 

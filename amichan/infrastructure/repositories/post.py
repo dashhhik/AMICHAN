@@ -13,13 +13,14 @@ class PostRepository(IPostRepository):
     def __init__(self, post_mapper: IModelMapper[Post, PostDTO]):
         self._post_mapper = post_mapper
 
-    async def create(self, session: Any, create_item: PostCreateDTO) -> PostDTO:
+    async def create(self, session: Any, thread_id:int, create_item: PostCreateDTO) -> PostDTO:
         """
         Create a new post and return its DTO representation.
         """
         query = (
             insert(Post)
             .values(
+                thread_id=thread_id,
                 parent_id=create_item.parent_id,
                 content=create_item.content,
                 created_at=datetime.now(),

@@ -17,6 +17,6 @@ class PostDTO:
 
 @dataclass(frozen=True)
 class PostCreateDTO:
-    parent_id: int
     content: str
+    parent_id: int | None = None
     nickname: str | None = None

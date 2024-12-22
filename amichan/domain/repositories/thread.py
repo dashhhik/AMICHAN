@@ -9,7 +9,7 @@ class IThreadRepository(abc.ABC):
 
     @abc.abstractmethod
     async def create(
-        self, session: Any, create_item: CreateThreadDTO
+        self, session: Any, board_id:int,  create_item: CreateThreadDTO
     ) -> ThreadRecordDTO: ...
 
     @abc.abstractmethod

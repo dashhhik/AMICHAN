@@ -17,11 +17,12 @@ class ThreadService(IThreadService):
     async def create_new_thread(
         self,
         session: Any,
-        author_nickname: str | None,
+        board_id: int,
         thread_to_create: CreateThreadDTO,
     ) -> ThreadRecordDTO:
         return await self._thread_repo.create(
             session=session,
+            board_id=board_id,
             create_item=thread_to_create,
         )
 

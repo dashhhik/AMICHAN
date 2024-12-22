@@ -47,10 +47,12 @@ async def get_board_threads(
 
 @router.post("/{board_id}/threads", response_model=ThreadResponse)
 async def create_thread(
+    board_id: int,
     payload: CreateThreadRequest,
     session: DBSession,
     current_user: CurrentUser,
     thread_service: IThreadService,
+
 ) -> ThreadResponse:
     """
     Create new article.
@@ -59,7 +61,7 @@ async def create_thread(
         RedirectResponse(url="/auth/login")
     thread_dto = await thread_service.create_new_thread(
         session=session,
-        author_nickname=payload.thread.nickname,
+        board_id=board_id,
         thread_to_create=payload.to_dto(),
     )
     return ThreadResponse.from_dto(dto=thread_dto)

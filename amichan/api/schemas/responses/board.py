@@ -9,8 +9,8 @@ class BoardsData(BaseModel):
     id: int
     name: str
     description: str | None
-    created_at: datetime.datetime
-    updated_at: datetime.datetime
+    created_at: str
+    updated_at: str
     threads_count: int
 
 

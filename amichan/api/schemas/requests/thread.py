@@ -12,10 +12,8 @@ class ThreadFilters(BaseModel):
 
 
 class CreateThreadData(BaseModel):
-    board_id: int
     title: str
     content: str
-    created_at: str
     nickname: str | None = None
 
 
@@ -24,9 +22,7 @@ class CreateThreadRequest(BaseModel):
 
     def to_dto(self) -> CreateThreadDTO:
         return CreateThreadDTO(
-            board_id=self.thread.board_id,
             title=self.thread.title,
             content=self.thread.content,
-            created_at=self.thread.created_at,
             nickname=self.thread.nickname,
         )

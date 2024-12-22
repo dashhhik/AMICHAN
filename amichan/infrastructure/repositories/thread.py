@@ -11,20 +11,20 @@ from amichan.infrastructure.models import Thread, Post
 
 class ThreadRepository(IThreadRepository):
     def __init__(
-        self,
-        thread_mapper: IModelMapper[Thread, ThreadRecordDTO],
-        post_mapper: IModelMapper[Post, Any],
+            self,
+            thread_mapper: IModelMapper[Thread, ThreadRecordDTO],
+            post_mapper: IModelMapper[Post, Any],
     ):
         self._thread_mapper = thread_mapper
         self._post_mapper = post_mapper
 
     async def create(
-        self, session: Any, create_item: CreateThreadDTO
+            self, session: Any, board_id: int, create_item: CreateThreadDTO
     ) -> ThreadRecordDTO:
         query = (
             insert(Thread)
             .values(
-                board_id=create_item.board_id,
+                board_id=board_id,
                 title=create_item.title,
                 content=create_item.content,
                 created_at=datetime.now(),

@@ -10,7 +10,7 @@ class IThreadService(abc.ABC):
     async def create_new_thread(
         self,
         session: Any,
-        author_nickname: str | None,
+        board_id: int,
         thread_to_create: CreateThreadDTO,
     ) -> ThreadRecordDTO: ...
 

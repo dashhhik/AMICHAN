@@ -19,7 +19,8 @@ const ThreadPosts = () => {
                 headers: { accept: "application/json" },
             })
             .then((response) => {
-                setThread(response.data.thread); // Сохраняем данные о треде
+                console.log("Полученные данные:", response.data);
+                setThread(response.data.thread.thread); // Сохраняем данные о треде
                 setPosts(response.data.posts); // Сохраняем посты
                 setLoading(false);
             })
@@ -75,7 +76,9 @@ const ThreadPosts = () => {
                 <div className="thread-details">
                     <h1>{thread.title}</h1>
                     <p>{thread.content}</p>
-                    <small>Автор: {thread.nickname}</small>
+                    <small>Автор: {thread.nickname || "Аноним"}</small>
+                    <small>Дата создания: {new Date(thread.created_at).toLocaleString()}</small>
+                    <small>Ответов: {thread.replies_count}</small>
                 </div>
             )}
             <hr />

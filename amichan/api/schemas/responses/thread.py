@@ -11,7 +11,7 @@ class ThreadData(BaseModel):
     id: int
     title: str
     content: str
-    created_at: datetime.datetime
+    created_at: str
     replies_count: int
     nickname: str | None = None
     is_deleted: bool = False
@@ -26,7 +26,7 @@ class ThreadResponse(BaseModel):
             id=dto.id,
             title=dto.title,
             content=dto.content,
-            created_at=dto.created_at,
+            created_at=dto.created_at.isoformat(),
             replies_count=dto.replies_count,
             nickname=dto.nickname,
             is_deleted=dto.is_deleted,
